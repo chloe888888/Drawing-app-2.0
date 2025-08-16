@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import PhotosUI
 
 struct ContentView: View {
     @State private var lines: [Line] = []
@@ -15,6 +16,9 @@ struct ContentView: View {
     @State private var lineWidth: CGFloat = 5
     @State private var isEraserOn = false
     @State private var showingSaveAlert = false
+    @State private var selectedImage: UIImage?
+    @State private var imageOffset: CGSize = .zero
+    @State private var showingImagePicker = false
     
     var body: some View {
         VStack {
@@ -35,8 +39,67 @@ struct ContentView: View {
         .alert("Saved to Photos!", isPresented: $showingSaveAlert) {
             Button("OK", role: .cancel) {}
         }
+        VStack {
+            if let image = selectedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .offset(imageOffset)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                imageOffset = value.translation
+                            }
+                            .onEnded { value in
+                            }
+                    )
+            } else {
+                Text("Tap to select an image")
+            }
+        }
+        .sheet(isPresented: $showingImagePicker) {
+            
+            PhotoPicker(selectedImage: $selectedImage)
+        }
     }
-    
+    struct PhotoPicker: UIViewControllerRepresentable {
+        @Binding var selectedImage: UIImage?
+        
+        func makeUIViewController(context: Context) -> PHPickerViewController {
+            var config = PHPickerConfiguration()
+            config.filter = .images
+            let picker = PHPickerViewController(configuration: config)
+            picker.delegate = context.coordinator
+            return picker
+        }
+        
+        func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+        
+        func makeCoordinator() -> Coordinator {
+            Coordinator(self)
+        }
+        
+        class Coordinator: NSObject, PHPickerViewControllerDelegate {
+            let parent: PhotoPicker
+            
+            init(_ parent: PhotoPicker) {
+                self.parent = parent
+            }
+            
+            func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+                picker.dismiss(animated: true)
+                
+                guard let itemProvider = results.first?.itemProvider,
+                      itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+                
+                itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                    DispatchQueue.main.async {
+                        self?.parent.selectedImage = image as? UIImage
+                    }
+                }
+            }
+        }
+    }
     private func save() {
         let image = snapshot()
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
