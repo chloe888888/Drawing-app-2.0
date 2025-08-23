@@ -31,7 +31,7 @@ struct ContentView: View {
                     lineWidth: $lineWidth,
                     isEraserOn: $isEraserOn,
                     lines: $lines,
-                    undoneLines: $undoneLines,
+                    undoneLines: $undoneLines, showingImagePicker: $showingImagePicker,
                     onSave: save,
                     showingSaveAlert: $showingSaveAlert)
             .padding()
