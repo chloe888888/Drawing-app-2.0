@@ -24,7 +24,7 @@ struct DrawingOnlyView: View {
                 }
                 .stroke(lines[i].color, style: StrokeStyle(lineWidth: lines[i].lineWidth, lineCap: .round, lineJoin: .round))
             }
+            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 }

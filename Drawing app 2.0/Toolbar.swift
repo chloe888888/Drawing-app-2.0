@@ -16,6 +16,7 @@ struct Toolbar: View {
     @Binding var lines: [Line]
     @Binding var undoneLines: [Line]
     @Binding var showingImagePicker: Bool
+
     
     var onSave: () -> Void
     @Binding var showingSaveAlert: Bool
@@ -70,7 +71,6 @@ struct Toolbar: View {
             showingImagePicker = true
             
         }
-
 
     }
     

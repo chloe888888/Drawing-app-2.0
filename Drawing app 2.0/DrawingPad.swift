@@ -29,7 +29,7 @@ struct DrawingPad: View {
                             }
                         }
                     }
-                    .stroke(lines[i].color, style: StrokeStyle(lineWidth: lines[i].lineWidth, lineCap: .round, lineJoin: .round))
+                    .stroke(lines[i].color, style: StrokeStyle(lineWidth: lines[i].lineWidth, lineCap: .square, lineJoin: .bevel))
                 }
                 
                 Path { path in
@@ -40,7 +40,7 @@ struct DrawingPad: View {
                         }
                     }
                 }
-                .stroke(currentLine.color, style: StrokeStyle(lineWidth: currentLine.lineWidth, lineCap: .round, lineJoin: .round))
+                .stroke(currentLine.color, style: StrokeStyle(lineWidth: currentLine.lineWidth, lineCap: .square, lineJoin: .bevel))
             }
             .contentShape(Rectangle())
             .gesture(DragGesture(minimumDistance: 0)
